@@ -7,322 +7,154 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
-/* =============================================
-   DESIGN DIRECTION: Industrial Ledger
-   — monospaced numbers, stark contrast,
-     felt-board dark with amber accents
-   ============================================= */
 :root {
-  --bg:       #0e0e0e;
-  --surface:  #161616;
-  --surface2: #1f1f1f;
-  --border:   #2a2a2a;
-  --amber:    #f59e0b;
-  --amber2:   #fbbf24;
-  --red:      #ef4444;
-  --green:    #22c55e;
-  --blue:     #3b82f6;
-  --text:     #e8e8e8;
-  --muted:    #5a5a5a;
-  --muted2:   #888;
+  --bg:      #0e0e0e;
+  --surf:    #161616;
+  --surf2:   #1f1f1f;
+  --border:  #2a2a2a;
+  --amber:   #f59e0b;
+  --amber2:  #fbbf24;
+  --red:     #ef4444;
+  --green:   #22c55e;
+  --blue:    #3b82f6;
+  --text:    #e8e8e8;
+  --muted:   #5a5a5a;
+  --muted2:  #888;
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Sarabun', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+body::after { content:''; position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px); pointer-events:none; z-index:9999; }
 
-body {
-  font-family: 'Sarabun', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-}
+/* LOGIN */
+#login-screen { position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; background:var(--bg); }
+.login-box { width:360px; padding:48px 40px; border:1px solid var(--border); background:var(--surf); }
+.login-logo { font-family:'DM Mono',monospace; font-size:2.2em; font-weight:500; color:var(--amber); margin-bottom:4px; }
+.login-sub  { font-family:'DM Mono',monospace; font-size:.72em; color:var(--muted2); text-transform:uppercase; letter-spacing:.08em; margin-bottom:36px; }
+.login-div  { height:1px; background:var(--border); margin-bottom:28px; }
+.btn-google { width:100%; padding:14px 20px; background:var(--surf2); border:1px solid var(--border); color:var(--text); font-family:'Sarabun',sans-serif; font-size:.95em; font-weight:500; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:12px; transition:border-color .2s,background .2s; }
+.btn-google:hover { border-color:var(--amber); background:rgba(245,158,11,.05); }
+.btn-google svg { width:18px; height:18px; flex-shrink:0; }
 
-/* Scanline texture */
-body::after {
-  content: '';
-  position: fixed; inset: 0;
-  background: repeating-linear-gradient(
-    0deg, transparent, transparent 2px,
-    rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
-  );
-  pointer-events: none; z-index: 9999;
-}
+/* TOPBAR */
+#app { display:none; }
+.topbar { position:fixed; top:0; left:0; right:0; height:52px; background:var(--surf); border-bottom:1px solid var(--border); display:flex; align-items:center; padding:0 24px; z-index:50; }
+.topbar-brand { font-family:'DM Mono',monospace; font-weight:500; color:var(--amber); font-size:1.05em; margin-right:32px; }
+.nav-link { padding:0 14px; height:52px; display:flex; align-items:center; font-size:.85em; color:var(--muted2); cursor:pointer; border-bottom:2px solid transparent; background:none; border-left:none; border-right:none; border-top:none; font-family:'Sarabun',sans-serif; font-weight:500; transition:color .15s,border-color .15s; }
+.nav-link:hover { color:var(--text); }
+.nav-link.active { color:var(--amber); border-bottom-color:var(--amber); }
+.topbar-right { margin-left:auto; display:flex; align-items:center; gap:14px; }
+.user-chip { display:flex; align-items:center; gap:8px; font-size:.82em; color:var(--muted2); }
+.user-chip img { width:26px; height:26px; border-radius:50%; border:1px solid var(--border); }
+.btn-out { padding:6px 14px; font-size:.78em; font-family:'Sarabun',sans-serif; background:none; border:1px solid var(--border); color:var(--muted2); cursor:pointer; transition:all .2s; }
+.btn-out:hover { border-color:var(--red); color:var(--red); }
 
-/* ---- LOGIN ---- */
-#login-screen {
-  position: fixed; inset: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--bg);
-}
-.login-box {
-  width: 360px; padding: 48px 40px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-}
-.login-wordmark {
-  font-family: 'DM Mono', monospace;
-  font-size: 2em; font-weight: 500;
-  color: var(--amber); letter-spacing: -0.02em;
-  margin-bottom: 6px;
-}
-.login-sub {
-  font-size: 0.82em; color: var(--muted2);
-  margin-bottom: 40px; font-family: 'DM Mono', monospace;
-  letter-spacing: 0.06em; text-transform: uppercase;
-}
-.login-divider {
-  height: 1px; background: var(--border); margin-bottom: 32px;
-}
-.btn-google {
-  width: 100%; padding: 14px 20px;
-  background: var(--surface2); border: 1px solid var(--border);
-  color: var(--text); font-family: 'Sarabun', sans-serif;
-  font-size: 0.95em; font-weight: 500; cursor: pointer;
-  display: flex; align-items: center; justify-content: center; gap: 12px;
-  transition: border-color 0.2s, background 0.2s;
-}
-.btn-google:hover { border-color: var(--amber); background: rgba(245,158,11,0.05); }
-.btn-google svg { width: 18px; height: 18px; flex-shrink: 0; }
+/* MAIN */
+.main { margin-top:52px; padding:28px 32px; max-width:1320px; }
+.page { display:none; }
+.page.active { display:block; animation:fi .2s ease; }
+@keyframes fi { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:none} }
+.pg-title { font-family:'DM Mono',monospace; font-size:1.05em; color:var(--amber); text-transform:uppercase; letter-spacing:.05em; margin-bottom:20px; display:flex; align-items:center; gap:12px; }
+.pg-title::after { content:''; flex:1; height:1px; background:var(--border); }
 
-/* ---- LAYOUT ---- */
-#app { display: none; }
+/* STATS */
+.stats-row { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); margin-bottom:20px; }
+.stat { background:var(--surf); padding:18px 22px; }
+.stat-lbl { font-family:'DM Mono',monospace; font-size:.68em; color:var(--muted2); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
+.stat-num { font-family:'DM Mono',monospace; font-size:1.7em; font-weight:500; line-height:1; }
+.stat-num.a { color:var(--amber); } .stat-num.r { color:var(--red); } .stat-num.g { color:var(--green); }
+.stat-sub { font-size:.72em; color:var(--muted2); margin-top:5px; font-family:'DM Mono',monospace; }
 
-.topbar {
-  position: fixed; top: 0; left: 0; right: 0; height: 52px;
-  background: var(--surface); border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; padding: 0 24px;
-  z-index: 50; gap: 0;
-}
-.topbar-brand {
-  font-family: 'DM Mono', monospace; font-weight: 500;
-  color: var(--amber); font-size: 1.05em; margin-right: 40px;
-  letter-spacing: -0.02em;
-}
-.nav-link {
-  padding: 0 16px; height: 52px; display: flex; align-items: center;
-  font-size: 0.85em; color: var(--muted2); cursor: pointer;
-  border-bottom: 2px solid transparent;
-  transition: color 0.15s, border-color 0.15s;
-  background: none; border-left: none; border-right: none; border-top: none;
-  font-family: 'Sarabun', sans-serif; font-weight: 500;
-}
-.nav-link:hover { color: var(--text); }
-.nav-link.active { color: var(--amber); border-bottom-color: var(--amber); }
+/* CARD */
+.card { background:var(--surf); border:1px solid var(--border); padding:22px; margin-bottom:14px; }
+.card-title { font-family:'DM Mono',monospace; font-size:.68em; color:var(--muted2); text-transform:uppercase; letter-spacing:.1em; margin-bottom:14px; }
+.grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:14px; }
+.chart-wrap { height:210px; position:relative; }
 
-.topbar-right {
-  margin-left: auto; display: flex; align-items: center; gap: 16px;
-}
-.user-chip {
-  display: flex; align-items: center; gap: 8px; font-size: 0.82em; color: var(--muted2);
-}
-.user-chip img {
-  width: 26px; height: 26px; border-radius: 50%;
-  border: 1px solid var(--border);
-}
-.btn-signout {
-  padding: 6px 14px; font-size: 0.78em; font-family: 'Sarabun', sans-serif;
-  background: none; border: 1px solid var(--border);
-  color: var(--muted2); cursor: pointer; transition: all 0.2s;
-}
-.btn-signout:hover { border-color: var(--red); color: var(--red); }
+/* FILTERS */
+.filter-bar { display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap; align-items:center; }
+.date-tabs { display:flex; }
+.date-tab { padding:7px 14px; font-size:.78em; font-family:'DM Mono',monospace; background:var(--surf2); border:1px solid var(--border); color:var(--muted2); cursor:pointer; transition:all .15s; margin-right:-1px; }
+.date-tab.active { background:var(--amber); border-color:var(--amber); color:#0e0e0e; z-index:1; }
+select, input[type=text], input[type=date], input[type=number] { background:var(--surf2); border:1px solid var(--border); padding:8px 12px; color:var(--text); font-family:'Sarabun',sans-serif; font-size:.85em; outline:none; transition:border-color .2s; border-radius:0; }
+select:focus, input:focus { border-color:var(--amber); }
+textarea { background:var(--surf2); border:1px solid var(--border); padding:10px 12px; color:var(--text); font-family:'Sarabun',sans-serif; font-size:.85em; resize:vertical; outline:none; width:100%; border-radius:0; }
+textarea:focus { border-color:var(--amber); }
 
-.main { margin-top: 52px; padding: 32px; max-width: 1280px; }
+/* TABLE */
+table { width:100%; border-collapse:collapse; font-size:.84em; }
+thead tr { border-bottom:1px solid var(--border); }
+thead th { text-align:left; padding:8px 12px; font-family:'DM Mono',monospace; font-size:.68em; color:var(--muted2); text-transform:uppercase; letter-spacing:.07em; font-weight:400; white-space:nowrap; }
+tbody tr { border-bottom:1px solid rgba(255,255,255,.03); transition:background .1s; }
+tbody tr:hover { background:rgba(245,158,11,.04); }
+tbody td { padding:10px 12px; vertical-align:middle; }
+.empty { text-align:center; padding:48px; color:var(--muted); font-family:'DM Mono',monospace; font-size:.8em; }
 
-/* ---- PAGES ---- */
-.page { display: none; }
-.page.active { display: block; animation: fadein 0.2s ease; }
-@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+/* BADGES */
+.badge { display:inline-block; padding:3px 8px; font-size:.73em; font-family:'DM Mono',monospace; font-weight:500; }
+.badge-pending { background:rgba(239,68,68,.15);  color:var(--red);   }
+.badge-paid    { background:rgba(34,197,94,.15);  color:var(--green); }
+.badge-BOB     { background:rgba(245,158,11,.15); color:var(--amber); }
+.badge-KITCHEN { background:rgba(59,130,246,.15); color:var(--blue);  }
+.badge-SERVICE { background:rgba(34,197,94,.15);  color:var(--green); }
+.badge-OTHER   { background:rgba(90,90,90,.3);    color:var(--muted2);}
+.amt { font-family:'DM Mono',monospace; }
+.amt-r { color:var(--red); font-weight:500; }
+.amt-g { color:var(--green); }
 
-.page-title {
-  font-family: 'DM Mono', monospace; font-size: 1.1em; font-weight: 500;
-  color: var(--amber); letter-spacing: 0.04em; text-transform: uppercase;
-  margin-bottom: 24px; display: flex; align-items: center; gap: 12px;
-}
-.page-title::after {
-  content: ''; flex: 1; height: 1px; background: var(--border);
-}
+/* FORM */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-group { display:flex; flex-direction:column; gap:5px; }
+.form-group.full { grid-column:1/-1; }
+.form-group input,.form-group select,.form-group textarea { width:100%; }
+.form-lbl { font-family:'DM Mono',monospace; font-size:.65em; color:var(--muted2); text-transform:uppercase; letter-spacing:.07em; }
+.form-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:18px; }
 
-/* ---- STAT CARDS ---- */
-.stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); margin-bottom: 24px; }
-.stat-card {
-  background: var(--surface); padding: 20px 24px;
-}
-.stat-label {
-  font-family: 'DM Mono', monospace; font-size: 0.7em; color: var(--muted2);
-  text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
-}
-.stat-num {
-  font-family: 'DM Mono', monospace; font-size: 1.8em; font-weight: 500;
-  line-height: 1;
-}
-.stat-num.amber { color: var(--amber); }
-.stat-num.red   { color: var(--red);   }
-.stat-num.green { color: var(--green); }
-.stat-sub { font-size: 0.75em; color: var(--muted2); margin-top: 6px; font-family: 'DM Mono', monospace; }
+/* BUTTONS */
+.btn { padding:9px 18px; font-family:'Sarabun',sans-serif; font-size:.88em; font-weight:600; cursor:pointer; border:1px solid; transition:all .15s; border-radius:0; }
+.btn-primary { background:var(--amber); border-color:var(--amber); color:#0e0e0e; }
+.btn-primary:hover { background:var(--amber2); }
+.btn-primary:disabled { opacity:.4; cursor:not-allowed; }
+.btn-ghost { background:transparent; border-color:var(--border); color:var(--muted2); }
+.btn-ghost:hover { border-color:var(--text); color:var(--text); }
+.btn-sm { padding:4px 10px; font-size:.75em; }
 
-/* ---- CARDS ---- */
-.card {
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 24px; margin-bottom: 16px;
-}
-.card-title {
-  font-family: 'DM Mono', monospace; font-size: 0.72em; color: var(--muted2);
-  text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px;
-}
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-.chart-wrap { height: 220px; position: relative; }
+/* MODAL */
+.modal-ov { position:fixed; inset:0; background:rgba(0,0,0,.75); display:none; align-items:center; justify-content:center; z-index:200; }
+.modal-ov.open { display:flex; }
+.modal { background:var(--surf); border:1px solid var(--border); padding:30px; width:540px; max-width:95vw; max-height:90vh; overflow-y:auto; }
+.modal-title { font-family:'DM Mono',monospace; font-size:.82em; color:var(--amber); text-transform:uppercase; letter-spacing:.08em; margin-bottom:22px; }
+.modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
 
-/* ---- FILTERS ---- */
-.filter-bar {
-  display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; align-items: center;
-}
-select, input[type="text"], input[type="date"], input[type="number"] {
-  background: var(--surface2); border: 1px solid var(--border);
-  padding: 8px 12px; color: var(--text);
-  font-family: 'Sarabun', sans-serif; font-size: 0.85em;
-  outline: none; transition: border-color 0.2s; border-radius: 0;
-}
-select:focus, input:focus { border-color: var(--amber); }
-textarea {
-  background: var(--surface2); border: 1px solid var(--border);
-  padding: 10px 12px; color: var(--text);
-  font-family: 'Sarabun', sans-serif; font-size: 0.85em;
-  resize: vertical; outline: none; width: 100%; border-radius: 0;
-}
-textarea:focus { border-color: var(--amber); }
+/* ATTACH */
+.att { font-family:'DM Mono',monospace; font-size:.73em; color:var(--blue); text-decoration:none; }
+.att:hover { text-decoration:underline; }
 
-/* ---- TABLE ---- */
-table { width: 100%; border-collapse: collapse; font-size: 0.85em; }
-thead tr { border-bottom: 1px solid var(--border); }
-thead th {
-  text-align: left; padding: 8px 12px;
-  font-family: 'DM Mono', monospace; font-size: 0.7em;
-  color: var(--muted2); text-transform: uppercase; letter-spacing: 0.08em;
-  font-weight: 400;
-}
-tbody tr { border-bottom: 1px solid rgba(255,255,255,0.03); transition: background 0.1s; }
-tbody tr:hover { background: rgba(245,158,11,0.04); }
-tbody td { padding: 11px 12px; vertical-align: middle; }
+/* TOAST */
+.toast { position:fixed; bottom:22px; right:22px; z-index:9998; padding:11px 18px; font-size:.85em; border:1px solid; transform:translateY(80px); opacity:0; transition:all .25s cubic-bezier(.34,1.56,.64,1); font-family:'DM Mono',monospace; }
+.toast.show { transform:none; opacity:1; }
+.toast.success { background:rgba(34,197,94,.1);  border-color:rgba(34,197,94,.4);  color:var(--green); }
+.toast.error   { background:rgba(239,68,68,.1);  border-color:rgba(239,68,68,.4);  color:var(--red);   }
+.toast.info    { background:rgba(245,158,11,.1); border-color:rgba(245,158,11,.4); color:var(--amber); }
 
-/* ---- BADGES ---- */
-.badge {
-  display: inline-block; padding: 3px 8px; font-size: 0.75em;
-  font-family: 'DM Mono', monospace; font-weight: 500;
-}
-.badge-pending { background: rgba(239,68,68,0.15); color: var(--red); }
-.badge-paid    { background: rgba(34,197,94,0.15);  color: var(--green); }
-.badge-bob     { background: rgba(245,158,11,0.15); color: var(--amber); }
-.badge-kitchen { background: rgba(59,130,246,0.15); color: var(--blue); }
-.badge-service { background: rgba(34,197,94,0.15);  color: var(--green); }
-.badge-other   { background: rgba(90,90,90,0.3);    color: var(--muted2); }
+/* LOADER */
+.loader { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:300; }
+.loader.show { display:flex; }
+.loader-bar { width:180px; height:2px; background:var(--border); margin:0 auto 10px; position:relative; overflow:hidden; }
+.loader-bar::after { content:''; position:absolute; left:-60%; top:0; bottom:0; width:60%; background:var(--amber); animation:sl .8s linear infinite; }
+@keyframes sl { to{left:120%} }
+.loader-txt { font-family:'DM Mono',monospace; font-size:.72em; color:var(--muted2); text-align:center; }
 
-/* ---- FORM ---- */
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-group.full { grid-column: 1 / -1; }
-.form-label {
-  font-family: 'DM Mono', monospace; font-size: 0.68em;
-  color: var(--muted2); text-transform: uppercase; letter-spacing: 0.08em;
+/* RESPONSIVE */
+@media(max-width:900px){
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .grid2{grid-template-columns:1fr;}
+  .form-grid{grid-template-columns:1fr;}
+  .form-group.full{grid-column:1;}
+  .main{padding:14px 16px;}
 }
-.form-group input, .form-group select, .form-group textarea { width: 100%; }
-
-/* ---- BUTTONS ---- */
-.btn {
-  padding: 10px 20px; font-family: 'Sarabun', sans-serif;
-  font-size: 0.88em; font-weight: 600; cursor: pointer;
-  border: 1px solid; transition: all 0.15s; border-radius: 0;
-}
-.btn-primary  { background: var(--amber); border-color: var(--amber); color: #0e0e0e; }
-.btn-primary:hover  { background: var(--amber2); border-color: var(--amber2); }
-.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
-.btn-ghost    { background: transparent; border-color: var(--border); color: var(--muted2); }
-.btn-ghost:hover    { border-color: var(--text); color: var(--text); }
-.btn-danger   { background: transparent; border-color: rgba(239,68,68,0.4); color: var(--red); padding: 5px 10px; font-size: 0.78em; }
-.btn-danger:hover   { background: rgba(239,68,68,0.1); }
-.btn-success  { background: transparent; border-color: rgba(34,197,94,0.4); color: var(--green); padding: 5px 10px; font-size: 0.78em; }
-.btn-success:hover  { background: rgba(34,197,94,0.1); }
-.form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-
-/* ---- EDIT MODAL ---- */
-.modal-overlay {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.75);
-  display: none; align-items: center; justify-content: center; z-index: 200;
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 32px; width: 560px; max-width: 95vw; max-height: 90vh; overflow-y: auto;
-}
-.modal-title {
-  font-family: 'DM Mono', monospace; font-size: 0.85em;
-  color: var(--amber); text-transform: uppercase; letter-spacing: 0.08em;
-  margin-bottom: 24px;
-}
-.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
-
-/* ---- ATTACH LINK ---- */
-.attach-link {
-  font-family: 'DM Mono', monospace; font-size: 0.75em;
-  color: var(--blue); text-decoration: none;
-}
-.attach-link:hover { text-decoration: underline; }
-
-/* ---- TOAST ---- */
-.toast {
-  position: fixed; bottom: 24px; right: 24px; z-index: 9998;
-  padding: 12px 20px; font-size: 0.88em;
-  border: 1px solid; transform: translateY(80px); opacity: 0;
-  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
-  font-family: 'DM Mono', monospace;
-}
-.toast.show { transform: none; opacity: 1; }
-.toast.success { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.4); color: var(--green); }
-.toast.error   { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.4); color: var(--red); }
-.toast.info    { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.4); color: var(--amber); }
-
-/* ---- LOADING ---- */
-.loader {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-  display: none; align-items: center; justify-content: center; z-index: 300;
-}
-.loader.show { display: flex; }
-.loader-inner { text-align: center; }
-.loader-bar {
-  width: 200px; height: 2px; background: var(--border); margin: 0 auto 12px;
-  position: relative; overflow: hidden;
-}
-.loader-bar::after {
-  content: ''; position: absolute; left: -60%; top: 0; bottom: 0; width: 60%;
-  background: var(--amber); animation: slide 0.8s linear infinite;
-}
-@keyframes slide { to { left: 120%; } }
-.loader-text { font-family: 'DM Mono', monospace; font-size: 0.75em; color: var(--muted2); }
-
-/* ---- DATE TABS ---- */
-.date-tabs { display: flex; gap: 0; }
-.date-tab {
-  padding: 8px 16px; font-size: 0.8em; font-family: 'DM Mono', monospace;
-  background: var(--surface2); border: 1px solid var(--border);
-  color: var(--muted2); cursor: pointer; transition: all 0.15s;
-  margin-right: -1px;
-}
-.date-tab.active { background: var(--amber); border-color: var(--amber); color: #0e0e0e; z-index: 1; }
-
-/* ---- AMOUNT ---- */
-.amt { font-family: 'DM Mono', monospace; }
-.amt-expense { color: var(--red); }
-.amt-income  { color: var(--green); }
-
-/* ---- EMPTY STATE ---- */
-.empty { text-align: center; padding: 48px; color: var(--muted); font-family: 'DM Mono', monospace; font-size: 0.82em; }
-
-/* ---- RESPONSIVE ---- */
-@media (max-width: 768px) {
-  .stats-row { grid-template-columns: 1fr 1fr; }
-  .grid-2    { grid-template-columns: 1fr; }
-  .form-grid { grid-template-columns: 1fr; }
-  .form-group.full { grid-column: 1; }
-  .main { padding: 16px; }
-  .topbar { padding: 0 12px; }
+@media(max-width:600px){
+  .stats-row{grid-template-columns:1fr;}
+  table{font-size:.75em;}
 }
 </style>
 </head>
@@ -330,13 +162,18 @@ tbody td { padding: 11px 12px; vertical-align: middle; }
 
 <!-- ===================== CONFIG ===================== -->
 <script>
-// =======================================================
-//  ⚙️ แก้ค่า 3 อย่างนี้ก่อนใช้งาน
-// =======================================================
-const GAPI_CLIENT_ID  = '901521883625-toralcis7o3jajkehgc7p6aia1j2dtcm.apps.googleusercontent.com';   // จาก Google Cloud Console
-const SPREADSHEET_ID  = '1nMSQFx7JFh3VIt3PwJM_VRhiLay-h3JEWMQ6vWlIcRM';     // ID ของ Google Sheet
-const SHEET_NAME      = 'BILLS';                   // ชื่อ tab ใน Sheet
-// =======================================================
+// ================================================
+//  ⚙️ แก้ค่า 2 อย่างนี้ก่อนใช้งาน
+// ================================================
+const GAPI_CLIENT_ID = '901521883625-toralcis7o3jajkehgc7p6aia1j2dtcm.apps.googleusercontent.com';   // OAuth Client ID จาก Google Cloud
+const SPREADSHEET_ID = '1nMSQFx7JFh3VIt3PwJM_VRhiLay-h3JEWMQ6vWlIcRM';     // ID ของ Google Sheet
+const SHEET_NAME     = 'BILLS';
+// ================================================
+
+// Sheet columns (ตรงกับ server.js)
+// A=Timestamp B=วันที่ C=แผนก D=หมวดหมู่ E=ร้าน/Supplier
+// F=ชื่อบิล   G=ยอด   H=Note  I=สถานะ
+// J=DriveURL_บิล  K=DriveURL_สลิป  L=UserID
 
 const DEPARTMENTS  = ['BOB','KITCHEN','SERVICE','OTHER'];
 const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุปกรณ์','บรรจุภัณฑ์','ค่าก่อสร้าง/ปรับปรุง','ของส่วนกลาง','อื่นๆ'];
@@ -345,9 +182,9 @@ const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุป
 <!-- ===================== LOGIN ===================== -->
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-wordmark">B&amp;OB</div>
+    <div class="login-logo">B&amp;OB</div>
     <div class="login-sub">Bill Tracker Dashboard</div>
-    <div class="login-divider"></div>
+    <div class="login-div"></div>
     <button class="btn-google" onclick="signIn()">
       <svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
       Sign in ด้วย Google
@@ -357,51 +194,48 @@ const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุป
 
 <!-- ===================== LOADER ===================== -->
 <div class="loader" id="loader">
-  <div class="loader-inner">
-    <div class="loader-bar"></div>
-    <div class="loader-text" id="loader-text">กำลังโหลด...</div>
-  </div>
+  <div><div class="loader-bar"></div><div class="loader-txt" id="loader-txt">กำลังโหลด...</div></div>
 </div>
 
 <!-- ===================== TOAST ===================== -->
 <div class="toast" id="toast"></div>
 
 <!-- ===================== EDIT MODAL ===================== -->
-<div class="modal-overlay" id="edit-modal" onclick="closeModal(event)">
+<div class="modal-ov" id="edit-modal" onclick="closeModal(event)">
   <div class="modal">
     <div class="modal-title">แก้ไขรายการ</div>
     <input type="hidden" id="edit-row">
     <div class="form-grid">
       <div class="form-group">
-        <label class="form-label">วันที่</label>
+        <label class="form-lbl">วันที่</label>
         <input type="date" id="edit-date">
       </div>
       <div class="form-group">
-        <label class="form-label">แผนก</label>
+        <label class="form-lbl">แผนก</label>
         <select id="edit-dept"></select>
       </div>
+      <div class="form-group full">
+        <label class="form-lbl">ชื่อบิล</label>
+        <input type="text" id="edit-billtitle" placeholder="ชื่อบิล / รายละเอียด">
+      </div>
       <div class="form-group">
-        <label class="form-label">หมวดหมู่</label>
+        <label class="form-lbl">หมวดหมู่</label>
         <select id="edit-cat"></select>
       </div>
       <div class="form-group">
-        <label class="form-label">ร้าน / Supplier</label>
+        <label class="form-lbl">ร้าน / Supplier</label>
         <input type="text" id="edit-supplier" placeholder="ชื่อร้าน">
       </div>
-      <div class="form-group full">
-        <label class="form-label">รายการ</label>
-        <textarea id="edit-items" rows="2" placeholder="สรุปรายการสั้นๆ"></textarea>
-      </div>
       <div class="form-group">
-        <label class="form-label">ยอด (บาท)</label>
+        <label class="form-lbl">ยอด (บาท)</label>
         <input type="number" id="edit-amount" placeholder="0.00" step="0.01">
       </div>
       <div class="form-group">
-        <label class="form-label">Note</label>
+        <label class="form-lbl">Note</label>
         <input type="text" id="edit-note" placeholder="หมายเหตุ">
       </div>
       <div class="form-group">
-        <label class="form-label">สถานะ</label>
+        <label class="form-lbl">สถานะ</label>
         <select id="edit-status">
           <option value="ค้างชำระ">ค้างชำระ</option>
           <option value="ชำระแล้ว">ชำระแล้ว</option>
@@ -417,18 +251,17 @@ const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุป
 
 <!-- ===================== APP ===================== -->
 <div id="app">
-  <!-- TOPBAR -->
   <div class="topbar">
     <div class="topbar-brand">B&amp;OB</div>
-    <button class="nav-link active" data-page="overview"  onclick="showPage('overview')">Overview</button>
-    <button class="nav-link"        data-page="bills"     onclick="showPage('bills')">รายการบิล</button>
-    <button class="nav-link"        data-page="pending"   onclick="showPage('pending')">ค้างชำระ</button>
+    <button class="nav-link active" data-page="overview" onclick="showPage('overview')">Overview</button>
+    <button class="nav-link" data-page="bills"    onclick="showPage('bills')">รายการบิล</button>
+    <button class="nav-link" data-page="pending"  onclick="showPage('pending')">ค้างชำระ</button>
     <div class="topbar-right">
       <div class="user-chip">
         <img id="user-avatar" src="" alt="">
         <span id="user-name">—</span>
       </div>
-      <button class="btn-signout" onclick="signOut()">ออก</button>
+      <button class="btn-out" onclick="signOut()">ออก</button>
     </div>
   </div>
 
@@ -436,10 +269,8 @@ const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุป
 
     <!-- ===== OVERVIEW ===== -->
     <div class="page active" id="page-overview">
-      <div class="page-title">Overview</div>
-
-      <!-- Period tabs -->
-      <div class="filter-bar" style="margin-bottom:20px">
+      <div class="pg-title">Overview</div>
+      <div class="filter-bar" style="margin-bottom:18px">
         <div class="date-tabs">
           <button class="date-tab active" onclick="setPeriod('month',this)">เดือนนี้</button>
           <button class="date-tab" onclick="setPeriod('last',this)">เดือนที่แล้ว</button>
@@ -447,66 +278,60 @@ const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุป
         </div>
         <input type="date" id="ov-from" onchange="loadOverview()">
         <input type="date" id="ov-to"   onchange="loadOverview()">
-        <button class="btn btn-ghost" style="padding:8px 14px;font-size:0.8em" onclick="loadData()">↺ Refresh</button>
+        <button class="btn btn-ghost btn-sm" onclick="loadData()">↺ Refresh</button>
       </div>
 
-      <!-- Stats -->
       <div class="stats-row">
-        <div class="stat-card">
-          <div class="stat-label">รายจ่ายรวม</div>
-          <div class="stat-num red" id="ov-total">฿0</div>
+        <div class="stat">
+          <div class="stat-lbl">รายจ่ายรวม</div>
+          <div class="stat-num r" id="ov-total">฿0</div>
           <div class="stat-sub" id="ov-count">0 รายการ</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">ค้างชำระ</div>
-          <div class="stat-num amber" id="ov-pending">฿0</div>
-          <div class="stat-sub" id="ov-pending-count">0 รายการ</div>
+        <div class="stat">
+          <div class="stat-lbl">ค้างชำระ</div>
+          <div class="stat-num a" id="ov-pending">฿0</div>
+          <div class="stat-sub" id="ov-pc">0 รายการ</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">ชำระแล้ว</div>
-          <div class="stat-num green" id="ov-paid">฿0</div>
-          <div class="stat-sub" id="ov-paid-count">0 รายการ</div>
+        <div class="stat">
+          <div class="stat-lbl">ชำระแล้ว</div>
+          <div class="stat-num g" id="ov-paid">฿0</div>
+          <div class="stat-sub" id="ov-pdc">0 รายการ</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">แผนกสูงสุด</div>
-          <div class="stat-num amber" id="ov-top-dept" style="font-size:1.3em">—</div>
-          <div class="stat-sub" id="ov-top-dept-amt">—</div>
+        <div class="stat">
+          <div class="stat-lbl">แผนกสูงสุด</div>
+          <div class="stat-num a" id="ov-top" style="font-size:1.2em">—</div>
+          <div class="stat-sub" id="ov-top-amt">—</div>
         </div>
       </div>
 
-      <!-- Charts -->
-      <div class="grid-2">
+      <div class="grid2">
         <div class="card">
           <div class="card-title">รายจ่ายรายเดือน</div>
-          <div class="chart-wrap"><canvas id="chart-monthly"></canvas></div>
+          <div class="chart-wrap"><canvas id="ch-monthly"></canvas></div>
         </div>
         <div class="card">
           <div class="card-title">แยกแผนก</div>
-          <div class="chart-wrap"><canvas id="chart-dept"></canvas></div>
+          <div class="chart-wrap"><canvas id="ch-dept"></canvas></div>
         </div>
       </div>
-      <div class="grid-2">
+      <div class="grid2">
         <div class="card">
-          <div class="card-title">หมวดหมู่รายจ่าย</div>
-          <div class="chart-wrap"><canvas id="chart-cat"></canvas></div>
+          <div class="card-title">หมวดหมู่</div>
+          <div class="chart-wrap"><canvas id="ch-cat"></canvas></div>
         </div>
         <div class="card">
           <div class="card-title">สถานะการชำระ</div>
-          <div class="chart-wrap"><canvas id="chart-status"></canvas></div>
+          <div class="chart-wrap"><canvas id="ch-status"></canvas></div>
         </div>
       </div>
     </div>
 
     <!-- ===== ALL BILLS ===== -->
     <div class="page" id="page-bills">
-      <div class="page-title">รายการบิลทั้งหมด</div>
+      <div class="pg-title">รายการบิลทั้งหมด</div>
       <div class="filter-bar">
-        <select id="f-dept" onchange="renderBills()">
-          <option value="">ทุกแผนก</option>
-        </select>
-        <select id="f-cat" onchange="renderBills()">
-          <option value="">ทุกหมวด</option>
-        </select>
+        <select id="f-dept"   onchange="renderBills()"><option value="">ทุกแผนก</option></select>
+        <select id="f-cat"    onchange="renderBills()"><option value="">ทุกหมวด</option></select>
         <select id="f-status" onchange="renderBills()">
           <option value="">ทุกสถานะ</option>
           <option value="ค้างชำระ">ค้างชำระ</option>
@@ -514,13 +339,14 @@ const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุป
         </select>
         <input type="date" id="f-from" onchange="renderBills()">
         <input type="date" id="f-to"   onchange="renderBills()">
-        <input type="text" id="f-search" placeholder="ค้นหา..." oninput="renderBills()" style="flex:1;min-width:120px">
+        <input type="text" id="f-search" placeholder="ค้นหา..." oninput="renderBills()" style="flex:1;min-width:100px">
       </div>
       <div class="card" style="padding:0;overflow:hidden">
         <table>
           <thead><tr>
-            <th>วันที่</th><th>แผนก</th><th>หมวด</th><th>ร้าน/Supplier</th><th>รายการ</th>
-            <th>ยอด</th><th>สถานะ</th><th>ไฟล์บิล</th><th>ไฟล์สลิป</th><th></th>
+            <th>วันที่</th><th>แผนก</th><th>ชื่อบิล</th><th>หมวด</th>
+            <th>ร้าน/Supplier</th><th>ยอด</th><th>สถานะ</th>
+            <th>ไฟล์บิล</th><th>ไฟล์สลิป</th><th></th>
           </tr></thead>
           <tbody id="bills-tbody"></tbody>
         </table>
@@ -530,12 +356,12 @@ const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุป
 
     <!-- ===== PENDING ===== -->
     <div class="page" id="page-pending">
-      <div class="page-title">บิลค้างชำระ</div>
+      <div class="pg-title">บิลค้างชำระ</div>
       <div class="card" style="padding:0;overflow:hidden">
         <table>
           <thead><tr>
-            <th>วันที่</th><th>แผนก</th><th>หมวด</th><th>ร้าน/Supplier</th><th>รายการ</th>
-            <th>ยอด</th><th>Note</th><th>ไฟล์บิล</th><th></th>
+            <th>วันที่</th><th>แผนก</th><th>ชื่อบิล</th><th>หมวด</th>
+            <th>ร้าน/Supplier</th><th>ยอด</th><th>Note</th><th>ไฟล์บิล</th><th></th>
           </tr></thead>
           <tbody id="pending-tbody"></tbody>
         </table>
@@ -543,10 +369,10 @@ const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุป
       </div>
     </div>
 
-  </div><!-- /main -->
-</div><!-- /app -->
+  </div>
+</div>
 
-<!-- ===================== GOOGLE API ===================== -->
+<!-- ===================== GOOGLE ===================== -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
 // =============================================
@@ -569,7 +395,7 @@ function signIn() {
       'https://www.googleapis.com/auth/userinfo.email',
     ].join(' '),
     callback: function(resp) {
-      if (resp.error) { toast('Login ไม่สำเร็จ', 'error'); return; }
+      if (resp.error) { toast('Login ไม่สำเร็จ: ' + resp.error, 'error'); return; }
       accessToken = resp.access_token;
       loadUserInfo();
     }
@@ -599,10 +425,10 @@ async function loadUserInfo() {
 }
 
 // =============================================
-//  API
+//  API HELPERS
 // =============================================
 async function gFetch(url, opts) {
-  var options = Object.assign({ headers: {} }, opts || {});
+  var options = Object.assign({ headers:{} }, opts||{});
   options.headers['Authorization'] = 'Bearer ' + accessToken;
   var res = await fetch(url, options);
   if (!res.ok) { var e = await res.json().catch(function(){return{};}); throw new Error((e.error&&e.error.message)||res.statusText); }
@@ -610,38 +436,50 @@ async function gFetch(url, opts) {
 }
 
 async function sheetGet(range) {
-  var r = await gFetch('https://sheets.googleapis.com/v4/spreadsheets/' + SPREADSHEET_ID + '/values/' + encodeURIComponent(range));
+  var r = await gFetch('https://sheets.googleapis.com/v4/spreadsheets/'+SPREADSHEET_ID+'/values/'+encodeURIComponent(range));
   return r.values || [];
 }
 
 async function sheetUpdate(range, values) {
   return gFetch(
-    'https://sheets.googleapis.com/v4/spreadsheets/' + SPREADSHEET_ID + '/values/' + encodeURIComponent(range) + '?valueInputOption=USER_ENTERED',
-    { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ values }) }
+    'https://sheets.googleapis.com/v4/spreadsheets/'+SPREADSHEET_ID+'/values/'+encodeURIComponent(range)+'?valueInputOption=USER_ENTERED',
+    { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({values}) }
   );
 }
 
 // =============================================
 //  LOAD DATA
+//  Sheet columns:
+//  A=Timestamp  B=วันที่    C=แผนก      D=หมวดหมู่
+//  E=ร้าน       F=ชื่อบิล  G=ยอด       H=Note
+//  I=สถานะ      J=URL_บิล  K=URL_สลิป  L=UserID
 // =============================================
 async function loadData() {
   showLoader('กำลังโหลดข้อมูล...');
   try {
     var rows = await sheetGet(SHEET_NAME + '!A:L');
-    allBills = (rows.slice(1) || []).map(function(r, i) {
+    allBills = (rows.slice(1)||[]).map(function(r,i) {
       return {
-        rowIndex: i + 2,
-        timestamp: r[0]||'', date: r[1]||'', dept: r[2]||'',
-        cat: r[3]||'', supplier: r[4]||'', items: r[5]||'',
-        amount: parseFloat(r[6])||0, note: r[7]||'',
-        status: r[8]||'', billUrl: r[9]||'', slipUrl: r[10]||'', uid: r[11]||''
+        rowIndex:  i+2,
+        timestamp: r[0]||'',
+        date:      r[1]||'',
+        dept:      r[2]||'',
+        cat:       r[3]||'',
+        supplier:  r[4]||'',
+        billTitle: r[5]||'',   // F = ชื่อบิล
+        amount:    parseFloat(r[6])||0,
+        note:      r[7]||'',
+        status:    r[8]||'',
+        billUrl:   r[9]||'',
+        slipUrl:   r[10]||'',
+        uid:       r[11]||''
       };
-    }).filter(function(r) { return r.date || r.timestamp; });
+    }).filter(function(r){ return r.date||r.timestamp; });
 
     loadOverview();
     renderBills();
     renderPending();
-  } catch(e) { toast('โหลดข้อมูลไม่สำเร็จ: ' + e.message, 'error'); }
+  } catch(e) { toast('โหลดข้อมูลไม่สำเร็จ: '+e.message,'error'); }
   hideLoader();
 }
 
@@ -651,14 +489,14 @@ async function loadData() {
 function setPeriod(mode, el) {
   document.querySelectorAll('.date-tab').forEach(function(b){b.classList.remove('active');});
   if (el) el.classList.add('active');
-  var now = new Date(), y = now.getFullYear(), m = now.getMonth();
-  if (mode === 'month') {
+  var now=new Date(), y=now.getFullYear(), m=now.getMonth();
+  if (mode==='month') {
     document.getElementById('ov-from').value = new Date(y,m,1).toISOString().split('T')[0];
     document.getElementById('ov-to').value   = new Date(y,m+1,0).toISOString().split('T')[0];
-  } else if (mode === 'last') {
+  } else if (mode==='last') {
     document.getElementById('ov-from').value = new Date(y,m-1,1).toISOString().split('T')[0];
     document.getElementById('ov-to').value   = new Date(y,m,0).toISOString().split('T')[0];
-  } else if (mode === 'year') {
+  } else if (mode==='year') {
     document.getElementById('ov-from').value = new Date(y,0,1).toISOString().split('T')[0];
     document.getElementById('ov-to').value   = new Date(y,11,31).toISOString().split('T')[0];
   }
@@ -668,103 +506,58 @@ function setPeriod(mode, el) {
 function loadOverview() {
   var from = document.getElementById('ov-from').value;
   var to   = document.getElementById('ov-to').value;
-  var rows = allBills.filter(function(r) {
-    return (!from || r.date >= from) && (!to || r.date <= to);
-  });
+  var rows = allBills.filter(function(r){ return (!from||r.date>=from)&&(!to||r.date<=to); });
 
   var total   = rows.reduce(function(s,r){return s+r.amount;},0);
   var pending = rows.filter(function(r){return r.status.includes('ค้างชำระ');});
   var paid    = rows.filter(function(r){return r.status.includes('ชำระแล้ว');});
-  var pendAmt = pending.reduce(function(s,r){return s+r.amount;},0);
-  var paidAmt = paid.reduce(function(s,r){return s+r.amount;},0);
+  var pAmt    = pending.reduce(function(s,r){return s+r.amount;},0);
+  var dAmt    = paid.reduce(function(s,r){return s+r.amount;},0);
 
-  document.getElementById('ov-total').textContent         = '฿' + fmt(total);
-  document.getElementById('ov-count').textContent         = rows.length + ' รายการ';
-  document.getElementById('ov-pending').textContent       = '฿' + fmt(pendAmt);
-  document.getElementById('ov-pending-count').textContent = pending.length + ' รายการ';
-  document.getElementById('ov-paid').textContent          = '฿' + fmt(paidAmt);
-  document.getElementById('ov-paid-count').textContent    = paid.length + ' รายการ';
+  document.getElementById('ov-total').textContent   = '฿'+fmt(total);
+  document.getElementById('ov-count').textContent   = rows.length+' รายการ';
+  document.getElementById('ov-pending').textContent = '฿'+fmt(pAmt);
+  document.getElementById('ov-pc').textContent      = pending.length+' รายการ';
+  document.getElementById('ov-paid').textContent    = '฿'+fmt(dAmt);
+  document.getElementById('ov-pdc').textContent     = paid.length+' รายการ';
 
-  var deptSum = {};
-  rows.forEach(function(r){ deptSum[r.dept] = (deptSum[r.dept]||0) + r.amount; });
-  var top = Object.entries(deptSum).sort(function(a,b){return b[1]-a[1];})[0];
-  document.getElementById('ov-top-dept').textContent     = top ? top[0] : '—';
-  document.getElementById('ov-top-dept-amt').textContent = top ? '฿'+fmt(top[1]) : '—';
+  var ds={};
+  rows.forEach(function(r){ds[r.dept||'ไม่ระบุ']=(ds[r.dept||'ไม่ระบุ']||0)+r.amount;});
+  var top=Object.entries(ds).sort(function(a,b){return b[1]-a[1];})[0];
+  document.getElementById('ov-top').textContent     = top?top[0]:'—';
+  document.getElementById('ov-top-amt').textContent = top?'฿'+fmt(top[1]):'—';
 
   drawCharts(rows, from, to);
 }
 
 function drawCharts(rows, from, to) {
-  // Monthly
-  var months = {};
-  if (from && to) {
-    var d = new Date(from), end = new Date(to);
-    while (d <= end) {
-      months[d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')] = 0;
-      d.setMonth(d.getMonth()+1);
-    }
+  // Monthly bar
+  var months={};
+  if (from&&to) {
+    var d=new Date(from), end=new Date(to);
+    while (d<=end) { months[d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')]=0; d.setMonth(d.getMonth()+1); }
   }
-  rows.forEach(function(r){ var k = r.date.slice(0,7); if (months[k]!==undefined) months[k]+=r.amount; });
-  destroyChart('monthly');
-  charts.monthly = new Chart(document.getElementById('chart-monthly'), {
-    type: 'bar',
-    data: {
-      labels: Object.keys(months),
-      datasets: [{ label: 'รายจ่าย', data: Object.values(months), backgroundColor: 'rgba(239,68,68,0.6)', borderRadius: 2 }]
-    },
-    options: barOpts()
-  });
+  rows.forEach(function(r){ var k=r.date.slice(0,7); if(months[k]!==undefined) months[k]+=r.amount; });
+  dc('monthly'); charts.monthly=new Chart(document.getElementById('ch-monthly'),{ type:'bar', data:{ labels:Object.keys(months), datasets:[{label:'รายจ่าย',data:Object.values(months),backgroundColor:'rgba(239,68,68,.6)',borderRadius:2}] }, options:barOpts() });
 
   // Dept
-  var deptD = {};
-  rows.forEach(function(r){ deptD[r.dept||'ไม่ระบุ'] = (deptD[r.dept||'ไม่ระบุ']||0)+r.amount; });
-  destroyChart('dept');
-  charts.dept = new Chart(document.getElementById('chart-dept'), {
-    type: 'doughnut',
-    data: { labels: Object.keys(deptD), datasets: [{ data: Object.values(deptD), backgroundColor: ['#f59e0b','#3b82f6','#22c55e','#5a5a5a'], borderWidth: 0 }] },
-    options: donutOpts()
-  });
+  var dd={};rows.forEach(function(r){dd[r.dept||'ไม่ระบุ']=(dd[r.dept||'ไม่ระบุ']||0)+r.amount;});
+  dc('dept'); charts.dept=new Chart(document.getElementById('ch-dept'),{ type:'doughnut', data:{labels:Object.keys(dd),datasets:[{data:Object.values(dd),backgroundColor:['#f59e0b','#3b82f6','#22c55e','#5a5a5a'],borderWidth:0}]}, options:donutOpts() });
 
   // Cat
-  var catD = {};
-  rows.forEach(function(r){ catD[r.cat||'ไม่ระบุ'] = (catD[r.cat||'ไม่ระบุ']||0)+r.amount; });
-  destroyChart('cat');
-  charts.cat = new Chart(document.getElementById('chart-cat'), {
-    type: 'doughnut',
-    data: { labels: Object.keys(catD), datasets: [{ data: Object.values(catD), backgroundColor: ['#f59e0b','#ef4444','#3b82f6','#22c55e','#a78bfa','#fb923c','#5a5a5a'], borderWidth: 0 }] },
-    options: donutOpts()
-  });
+  var cd={};rows.forEach(function(r){cd[r.cat||'ไม่ระบุ']=(cd[r.cat||'ไม่ระบุ']||0)+r.amount;});
+  dc('cat'); charts.cat=new Chart(document.getElementById('ch-cat'),{ type:'doughnut', data:{labels:Object.keys(cd),datasets:[{data:Object.values(cd),backgroundColor:['#f59e0b','#ef4444','#3b82f6','#22c55e','#a78bfa','#fb923c','#5a5a5a'],borderWidth:0}]}, options:donutOpts() });
 
   // Status
-  var pendAmt = rows.filter(function(r){return r.status.includes('ค้างชำระ');}).reduce(function(s,r){return s+r.amount;},0);
-  var paidAmt = rows.filter(function(r){return r.status.includes('ชำระแล้ว');}).reduce(function(s,r){return s+r.amount;},0);
-  destroyChart('status');
-  charts.status = new Chart(document.getElementById('chart-status'), {
-    type: 'doughnut',
-    data: { labels: ['ค้างชำระ','ชำระแล้ว'], datasets: [{ data: [pendAmt, paidAmt], backgroundColor: ['#ef4444','#22c55e'], borderWidth: 0 }] },
-    options: donutOpts()
-  });
+  var pa=rows.filter(function(r){return r.status.includes('ค้างชำระ');}).reduce(function(s,r){return s+r.amount;},0);
+  var da=rows.filter(function(r){return r.status.includes('ชำระแล้ว');}).reduce(function(s,r){return s+r.amount;},0);
+  dc('status'); charts.status=new Chart(document.getElementById('ch-status'),{ type:'doughnut', data:{labels:['ค้างชำระ','ชำระแล้ว'],datasets:[{data:[pa,da],backgroundColor:['#ef4444','#22c55e'],borderWidth:0}]}, options:donutOpts() });
 }
 
-function destroyChart(k) { if (charts[k]) { charts[k].destroy(); delete charts[k]; } }
+function dc(k){ if(charts[k]){charts[k].destroy();delete charts[k];} }
 
-function barOpts() {
-  return { responsive:true, maintainAspectRatio:false,
-    plugins:{ legend:{ display:false } },
-    scales:{
-      x:{ ticks:{color:'#5a5a5a',font:{family:'DM Mono',size:10}}, grid:{color:'rgba(255,255,255,0.03)'} },
-      y:{ ticks:{color:'#5a5a5a',font:{family:'DM Mono',size:10},callback:function(v){return '฿'+fmt(v);}}, grid:{color:'rgba(255,255,255,0.03)'} }
-    }
-  };
-}
-function donutOpts() {
-  return { responsive:true, maintainAspectRatio:false, cutout:'60%',
-    plugins:{
-      legend:{ position:'right', labels:{ color:'#888', font:{family:'DM Mono',size:10}, boxWidth:10, padding:8 } },
-      tooltip:{ callbacks:{ label:function(c){ return ' ฿'+fmt(c.parsed); } } }
-    }
-  };
-}
+function barOpts(){ return { responsive:true,maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{ x:{ticks:{color:'#5a5a5a',font:{family:'DM Mono',size:10}},grid:{color:'rgba(255,255,255,.03)'}}, y:{ticks:{color:'#5a5a5a',font:{family:'DM Mono',size:10},callback:function(v){return '฿'+fmt(v);}},grid:{color:'rgba(255,255,255,.03)'}} } }; }
+function donutOpts(){ return { responsive:true,maintainAspectRatio:false,cutout:'60%', plugins:{ legend:{position:'right',labels:{color:'#888',font:{family:'DM Mono',size:10},boxWidth:10,padding:8}}, tooltip:{callbacks:{label:function(c){return ' ฿'+fmt(c.parsed);}}} } }; }
 
 // =============================================
 //  RENDER BILLS TABLE
@@ -778,35 +571,34 @@ function renderBills() {
   var search = (document.getElementById('f-search').value||'').toLowerCase();
 
   var rows = allBills.filter(function(r) {
-    if (dept   && r.dept   !== dept)   return false;
-    if (cat    && r.cat    !== cat)    return false;
-    if (status && !r.status.includes(status)) return false;
-    if (from   && r.date < from)       return false;
-    if (to     && r.date > to)         return false;
-    if (search && !(r.supplier+r.items+r.cat+r.dept+r.note).toLowerCase().includes(search)) return false;
+    if (dept   && r.dept !== dept)               return false;
+    if (cat    && r.cat  !== cat)                return false;
+    if (status && !r.status.includes(status))    return false;
+    if (from   && r.date < from)                 return false;
+    if (to     && r.date > to)                   return false;
+    if (search && !(r.billTitle+r.supplier+r.cat+r.dept+r.note).toLowerCase().includes(search)) return false;
     return true;
   });
-
   rows.sort(function(a,b){return b.date.localeCompare(a.date);});
+
   var tbody = document.getElementById('bills-tbody');
   var empty = document.getElementById('bills-empty');
-
-  if (!rows.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  if (!rows.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
 
   tbody.innerHTML = rows.map(function(r) {
-    var isPending = r.status.includes('ค้างชำระ');
+    var ip = r.status.includes('ค้างชำระ');
     return '<tr>' +
       '<td class="amt">' + (r.date||'—') + '</td>' +
-      '<td><span class="badge badge-' + (r.dept||'other').toLowerCase() + '">' + (r.dept||'—') + '</span></td>' +
-      '<td style="color:var(--muted2);font-size:0.82em">' + (r.cat||'—') + '</td>' +
-      '<td>' + (r.supplier||'<span style="color:var(--muted)">ยังไม่กรอก</span>') + '</td>' +
-      '<td style="color:var(--muted2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (r.items||'—') + '</td>' +
-      '<td class="amt ' + (r.amount ? 'amt-expense' : '') + '">' + (r.amount ? '฿'+fmt(r.amount) : '—') + '</td>' +
-      '<td><span class="badge ' + (isPending?'badge-pending':'badge-paid') + '">' + r.status + '</span></td>' +
-      '<td>' + (r.billUrl ? '<a href="'+r.billUrl+'" target="_blank" class="attach-link">📎 บิล</a>' : '') + '</td>' +
-      '<td>' + (r.slipUrl ? '<a href="'+r.slipUrl+'" target="_blank" class="attach-link">📎 สลิป</a>' : '') + '</td>' +
-      '<td><button class="btn btn-ghost" style="padding:4px 10px;font-size:0.75em" onclick="openEdit(' + r.rowIndex + ')">แก้ไข</button></td>' +
+      '<td><span class="badge badge-' + (r.dept||'OTHER') + '">' + (r.dept||'—') + '</span></td>' +
+      '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (r.billTitle||'<span style="color:var(--muted)">ยังไม่ระบุ</span>') + '</td>' +
+      '<td style="color:var(--muted2);font-size:.8em">' + (r.cat||'—') + '</td>' +
+      '<td style="color:var(--muted2);font-size:.8em;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (r.supplier||'—') + '</td>' +
+      '<td class="amt ' + (r.amount?'amt-r':'') + '">' + (r.amount?'฿'+fmt(r.amount):'—') + '</td>' +
+      '<td><span class="badge ' + (ip?'badge-pending':'badge-paid') + '">' + r.status + '</span></td>' +
+      '<td>' + (r.billUrl?'<a href="'+r.billUrl+'" target="_blank" class="att">📎 บิล</a>':'') + '</td>' +
+      '<td>' + (r.slipUrl?'<a href="'+r.slipUrl+'" target="_blank" class="att">📎 สลิป</a>':'') + '</td>' +
+      '<td><button class="btn btn-ghost btn-sm" onclick="openEdit('+r.rowIndex+')">แก้ไข</button></td>' +
       '</tr>';
   }).join('');
 }
@@ -816,24 +608,24 @@ function renderBills() {
 // =============================================
 function renderPending() {
   var rows = allBills.filter(function(r){return r.status.includes('ค้างชำระ');});
-  rows.sort(function(a,b){return a.date.localeCompare(b.date);}); // เก่าสุดอยู่บน
+  rows.sort(function(a,b){return a.date.localeCompare(b.date);}); // เก่าสุดขึ้นก่อน
 
   var tbody = document.getElementById('pending-tbody');
   var empty = document.getElementById('pending-empty');
-  if (!rows.length) { tbody.innerHTML=''; empty.style.display='block'; return; }
+  if (!rows.length){ tbody.innerHTML=''; empty.style.display='block'; return; }
   empty.style.display='none';
 
   tbody.innerHTML = rows.map(function(r) {
     return '<tr>' +
       '<td class="amt">' + (r.date||'—') + '</td>' +
-      '<td><span class="badge badge-' + (r.dept||'other').toLowerCase() + '">' + (r.dept||'—') + '</span></td>' +
-      '<td style="color:var(--muted2);font-size:0.82em">' + (r.cat||'—') + '</td>' +
-      '<td>' + (r.supplier||'<span style="color:var(--muted)">ยังไม่กรอก</span>') + '</td>' +
-      '<td style="color:var(--muted2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + (r.items||'—') + '</td>' +
-      '<td class="amt amt-expense">' + (r.amount ? '฿'+fmt(r.amount) : '—') + '</td>' +
-      '<td style="color:var(--muted2);font-size:0.82em">' + (r.note||'') + '</td>' +
-      '<td>' + (r.billUrl ? '<a href="'+r.billUrl+'" target="_blank" class="attach-link">📎 บิล</a>' : '') + '</td>' +
-      '<td><button class="btn btn-ghost" style="padding:4px 10px;font-size:0.75em" onclick="openEdit('+r.rowIndex+')">แก้ไข</button></td>' +
+      '<td><span class="badge badge-' + (r.dept||'OTHER') + '">' + (r.dept||'—') + '</span></td>' +
+      '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><strong>' + (r.billTitle||'<span style="color:var(--muted)">ยังไม่ระบุ</span>') + '</strong></td>' +
+      '<td style="color:var(--muted2);font-size:.8em">' + (r.cat||'—') + '</td>' +
+      '<td style="color:var(--muted2);font-size:.8em">' + (r.supplier||'—') + '</td>' +
+      '<td class="amt amt-r">' + (r.amount?'฿'+fmt(r.amount):'—') + '</td>' +
+      '<td style="color:var(--muted2);font-size:.8em">' + (r.note||'') + '</td>' +
+      '<td>' + (r.billUrl?'<a href="'+r.billUrl+'" target="_blank" class="att">📎 บิล</a>':'') + '</td>' +
+      '<td><button class="btn btn-ghost btn-sm" onclick="openEdit('+r.rowIndex+')">แก้ไข</button></td>' +
       '</tr>';
   }).join('');
 }
@@ -845,15 +637,15 @@ function openEdit(rowIndex) {
   var r = allBills.find(function(b){return b.rowIndex===rowIndex;});
   if (!r) return;
   editingRow = rowIndex;
-  document.getElementById('edit-row').value      = rowIndex;
-  document.getElementById('edit-date').value     = r.date;
-  document.getElementById('edit-dept').value     = r.dept;
-  document.getElementById('edit-cat').value      = r.cat;
-  document.getElementById('edit-supplier').value = r.supplier;
-  document.getElementById('edit-items').value    = r.items;
-  document.getElementById('edit-amount').value   = r.amount||'';
-  document.getElementById('edit-note').value     = r.note;
-  document.getElementById('edit-status').value   = r.status.includes('ชำระแล้ว') ? 'ชำระแล้ว' : 'ค้างชำระ';
+  document.getElementById('edit-row').value        = rowIndex;
+  document.getElementById('edit-date').value       = r.date;
+  document.getElementById('edit-dept').value       = r.dept;
+  document.getElementById('edit-billtitle').value  = r.billTitle;
+  document.getElementById('edit-cat').value        = r.cat;
+  document.getElementById('edit-supplier').value   = r.supplier;
+  document.getElementById('edit-amount').value     = r.amount||'';
+  document.getElementById('edit-note').value       = r.note;
+  document.getElementById('edit-status').value     = r.status.includes('ชำระแล้ว')?'ชำระแล้ว':'ค้างชำระ';
   document.getElementById('edit-modal').classList.add('open');
 }
 
@@ -863,58 +655,53 @@ function closeModal(e) {
 }
 
 async function saveEdit() {
-  var row      = editingRow;
-  var date     = document.getElementById('edit-date').value;
-  var dept     = document.getElementById('edit-dept').value;
-  var cat      = document.getElementById('edit-cat').value;
-  var supplier = document.getElementById('edit-supplier').value.trim();
-  var items    = document.getElementById('edit-items').value.trim();
-  var amount   = document.getElementById('edit-amount').value;
-  var note     = document.getElementById('edit-note').value.trim();
-  var status   = document.getElementById('edit-status').value;
+  var row       = editingRow;
+  var date      = document.getElementById('edit-date').value;
+  var dept      = document.getElementById('edit-dept').value;
+  var billTitle = document.getElementById('edit-billtitle').value.trim();
+  var cat       = document.getElementById('edit-cat').value;
+  var supplier  = document.getElementById('edit-supplier').value.trim();
+  var amount    = document.getElementById('edit-amount').value;
+  var note      = document.getElementById('edit-note').value.trim();
+  var status    = document.getElementById('edit-status').value;
 
   showLoader('กำลังบันทึก...');
   try {
-    await sheetUpdate(SHEET_NAME + '!B' + row + ':I' + row, [[
-      date, dept, cat, supplier, items, amount, note, status
+    // Update B:I (วันที่ ถึง สถานะ) = 8 columns
+    await sheetUpdate(SHEET_NAME+'!B'+row+':I'+row, [[
+      date, dept, cat, supplier, billTitle, amount, note, status
     ]]);
 
-    // อัปเดต local cache
+    // Update local cache
     var idx = allBills.findIndex(function(b){return b.rowIndex===row;});
-    if (idx !== -1) {
-      allBills[idx] = Object.assign(allBills[idx], { date, dept, cat, supplier, items, amount: parseFloat(amount)||0, note, status });
+    if (idx!==-1) {
+      allBills[idx] = Object.assign(allBills[idx], {
+        date, dept, cat, supplier, billTitle,
+        amount: parseFloat(amount)||0, note, status
+      });
     }
 
     document.getElementById('edit-modal').classList.remove('open');
-    toast('บันทึกสำเร็จ!', 'success');
+    toast('บันทึกสำเร็จ!','success');
     loadOverview();
     renderBills();
     renderPending();
-  } catch(e) { toast('บันทึกไม่สำเร็จ: ' + e.message, 'error'); }
+  } catch(e) { toast('บันทึกไม่สำเร็จ: '+e.message,'error'); }
   hideLoader();
 }
 
 // =============================================
-//  INIT DROPDOWNS
+//  INIT
 // =============================================
 function initDropdowns() {
-  var editDept = document.getElementById('edit-dept');
-  var fDept    = document.getElementById('f-dept');
-  DEPARTMENTS.forEach(function(d) {
-    editDept.innerHTML += '<option>' + d + '</option>';
-    fDept.innerHTML    += '<option>' + d + '</option>';
-  });
-
-  var editCat = document.getElementById('edit-cat');
-  var fCat    = document.getElementById('f-cat');
-  EXPENSE_CATS.forEach(function(c) {
-    editCat.innerHTML += '<option>' + c + '</option>';
-    fCat.innerHTML    += '<option>' + c + '</option>';
-  });
+  var ed=document.getElementById('edit-dept'), fd=document.getElementById('f-dept');
+  DEPARTMENTS.forEach(function(d){ ed.innerHTML+='<option>'+d+'</option>'; fd.innerHTML+='<option>'+d+'</option>'; });
+  var ec=document.getElementById('edit-cat'), fc=document.getElementById('f-cat');
+  EXPENSE_CATS.forEach(function(c){ ec.innerHTML+='<option>'+c+'</option>'; fc.innerHTML+='<option>'+c+'</option>'; });
 }
 
 function setDefaultDates() {
-  var now = new Date(), y = now.getFullYear(), m = now.getMonth();
+  var now=new Date(), y=now.getFullYear(), m=now.getMonth();
   document.getElementById('ov-from').value = new Date(y,m,1).toISOString().split('T')[0];
   document.getElementById('ov-to').value   = new Date(y,m+1,0).toISOString().split('T')[0];
 }
@@ -925,33 +712,26 @@ function setDefaultDates() {
 function showPage(name) {
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
   document.querySelectorAll('.nav-link').forEach(function(n){n.classList.remove('active');});
-  document.getElementById('page-' + name).classList.add('active');
-  document.querySelector('[data-page="' + name + '"]').classList.add('active');
-  if (name === 'pending') renderPending();
-  if (name === 'bills')   renderBills();
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelector('[data-page="'+name+'"]').classList.add('active');
+  if (name==='pending') renderPending();
+  if (name==='bills')   renderBills();
 }
 
 // =============================================
 //  HELPERS
 // =============================================
-function fmt(n) {
-  return (n||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2});
-}
+function fmt(n){ return (n||0).toLocaleString('th-TH',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 
 var toastTmr;
 function toast(msg, type) {
-  var el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'toast ' + (type||'info') + ' show';
+  var el=document.getElementById('toast');
+  el.textContent=msg; el.className='toast '+(type||'info')+' show';
   clearTimeout(toastTmr);
-  toastTmr = setTimeout(function(){ el.classList.remove('show'); }, 4000);
+  toastTmr=setTimeout(function(){el.classList.remove('show');},4000);
 }
-
-function showLoader(txt) {
-  document.getElementById('loader').classList.add('show');
-  document.getElementById('loader-text').textContent = txt||'กำลังโหลด...';
-}
-function hideLoader() { document.getElementById('loader').classList.remove('show'); }
+function showLoader(t){ document.getElementById('loader').classList.add('show'); document.getElementById('loader-txt').textContent=t||'กำลังโหลด...'; }
+function hideLoader(){ document.getElementById('loader').classList.remove('show'); }
 </script>
 </body>
 </html>
