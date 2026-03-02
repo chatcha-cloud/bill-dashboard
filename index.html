@@ -93,10 +93,10 @@ tbody td { padding:10px 12px; vertical-align:middle; }
 .badge { display:inline-block; padding:3px 8px; font-size:.73em; font-family:'DM Mono',monospace; font-weight:500; }
 .badge-pending { background:rgba(239,68,68,.15);  color:var(--red);   }
 .badge-paid    { background:rgba(34,197,94,.15);  color:var(--green); }
-.badge-BOB     { background:rgba(245,158,11,.15); color:var(--amber); }
-.badge-KITCHEN { background:rgba(59,130,246,.15); color:var(--blue);  }
-.badge-SERVICE { background:rgba(34,197,94,.15);  color:var(--green); }
-.badge-OTHER   { background:rgba(90,90,90,.3);    color:var(--muted2);}
+.badge-☕ BOB     { background:rgba(245,158,11,.15); color:var(--amber); }
+.badge-🍳 KITCHEN { background:rgba(59,130,246,.15); color:var(--blue);  }
+.badge-💁 SERVICE { background:rgba(34,197,94,.15);  color:var(--green); }
+.badge-📦 OTHER   { background:rgba(90,90,90,.3);    color:var(--muted2);}
 .amt { font-family:'DM Mono',monospace; }
 .amt-r { color:var(--red); font-weight:500; }
 .amt-g { color:var(--green); }
@@ -175,7 +175,11 @@ const SHEET_NAME     = 'BILLS';
 // F=ชื่อบิล   G=ยอด   H=Note  I=สถานะ
 // J=DriveURL_บิล  K=DriveURL_สลิป  L=UserID
 
-const DEPARTMENTS  = ['BOB','KITCHEN','SERVICE','OTHER'];
+const DEPARTMENTS  = const DEPARTMENTS = [
+  '☕ BOB', 
+  '🍳 KITCHEN', 
+  '💁 SERVICE', 
+  '📦 OTHER'];
 const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุปกรณ์','บรรจุภัณฑ์','ค่าก่อสร้าง/ปรับปรุง','ของส่วนกลาง','อื่นๆ'];
 </script>
 
