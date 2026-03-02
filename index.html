@@ -174,11 +174,16 @@ const SHEET_NAME     = 'BILLS';
 // A=Timestamp B=วันที่ C=แผนก D=หมวดหมู่ E=ร้าน/Supplier
 // F=ชื่อบิล   G=ยอด   H=Note  I=สถานะ
 // J=DriveURL_บิล  K=DriveURL_สลิป  L=UserID
+<script>
+// ... โค้ดส่วนอื่นคงเดิม ...
 
-const DEPARTMENTS  = const DEPARTMENTS  = ['☕ BOB', '🍳 KITCHEN', '💁 SERVICE', '📦 OTHER'];
+// ❌ จุดที่ผิดเดิม:
+// const DEPARTMENTS  = const DEPARTMENTS  = ['☕ BOB', '🍳 KITCHEN', '💁 SERVICE', '📦 OTHER'];
+
+// ✅ แก้ไขเป็น:
+const DEPARTMENTS  = ['☕ BOB', '🍳 KITCHEN', '💁 SERVICE', '📦 OTHER'];
 const EXPENSE_CATS = ['วัตถุดิบ','ค่าแรง','อุปกรณ์','บรรจุภัณฑ์','ค่าก่อสร้าง/ปรับปรุง','ของส่วนกลาง','อื่นๆ'];
 </script>
-
 <!-- ===================== LOGIN ===================== -->
 <div id="login-screen">
   <div class="login-box">
